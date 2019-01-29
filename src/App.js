@@ -1,26 +1,25 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { Provider } from 'react-redux';
 import './App.css';
+import store from './store';
+import AppBarComponent from './components/AppBarComponent';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import EstoqueComponent from './components/EstoqueComponent';
+import VendaComponent from './components/VendaComponent';
 
 class App extends Component {
   render() {
+    console.log(this.props.vendas);
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Provider store={store}>
+        <AppBarComponent />
+        <BrowserRouter>
+          <Switch>
+            <Route path="/" exact={true} component={VendaComponent} />
+            <Route path="/estoque" component={EstoqueComponent} />
+          </Switch>
+        </BrowserRouter>
+      </Provider>
     );
   }
 }
