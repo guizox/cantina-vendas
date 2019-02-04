@@ -1,12 +1,19 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
+import { Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
+import ItemDescription from './ItemDescription';
+import VendaList from './VendaList';
 
-class VendaComponent extends PureComponent {
-  render() {
-    console.log(this.props);
-    return <div>Venda Component</div>;
-  }
-}
+const VendaComponent = props => (
+  <Grid container direction="row">
+    <Grid item xs={2}>
+      <ItemDescription />
+    </Grid>
+    <Grid item xs={10}>
+      <VendaList />
+    </Grid>
+  </Grid>
+);
 
 const mapStateToProps = ({ vendas }) => ({ vendas });
 

@@ -6,10 +6,10 @@ import AppBarComponent from './components/AppBarComponent';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import EstoqueComponent from './components/EstoqueComponent';
 import VendaComponent from './components/VendaComponent';
+import CreateItem from './components/CreateItem';
 
 class App extends Component {
   render() {
-    console.log(this.props.vendas);
     return (
       <Provider store={store}>
         <AppBarComponent />
@@ -17,6 +17,8 @@ class App extends Component {
           <Switch>
             <Route path="/" exact={true} component={VendaComponent} />
             <Route path="/estoque" component={EstoqueComponent} />
+            <Route path="/create" component={CreateItem} />
+            <Route path="/create/:id" component={CreateItem} />
           </Switch>
         </BrowserRouter>
       </Provider>
