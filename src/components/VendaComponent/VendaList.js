@@ -15,6 +15,7 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import { removeItemAction } from '../../actions/vendas';
+import { formatCurrency } from '../../helper';
 
 const styles = theme => ({
   root: {
@@ -22,12 +23,6 @@ const styles = theme => ({
     width: '95%'
   }
 });
-
-const formatCurrency = value =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(value);
 
 const VendaList = ({ classes, vendas, removeItemAction }) => (
   <Paper className={classes.root}>

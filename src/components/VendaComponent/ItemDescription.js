@@ -1,6 +1,16 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Grid, TextField, Button, CircularProgress } from '@material-ui/core';
+import {
+  Grid,
+  TextField,
+  Button,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  MenuItem
+} from '@material-ui/core';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import {
@@ -37,8 +47,9 @@ class ItemDescription extends PureComponent {
     value: '0',
     product: {},
     paymentValue: 0,
-    discount: 0,
-    isLoading: false
+    cashBack: 0,
+    isLoading: false,
+    paymentType: 0
   };
 
   async componentWillMount() {
@@ -71,12 +82,12 @@ class ItemDescription extends PureComponent {
 
   onChange = async (field, value) => {
     const { product } = this.state;
-    debugger;
 
     if (field === 'quantity' && value && value > 0) {
       this.setState({
         ...this.state,
-        value: parseFloat(value.toString()) * parseFloat(product[0].valor)
+        value: parseFloat(value.toString()) * parseFloat(product[0].valor),
+        quantity: parseFloat(value.toString())
       });
     } else {
       this.setState({
@@ -85,12 +96,6 @@ class ItemDescription extends PureComponent {
       });
     }
   };
-
-  formatCurrency = value =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
 
   onKeyUpHandler = ev => {
     const { addItemAction } = this.props;
@@ -109,35 +114,47 @@ class ItemDescription extends PureComponent {
     }
   };
 
-  closeSelling() {
-    const { closeSellAction } = this.props;
-    const { discount, paymentValue } = this.state;
-    debugger;
+  async closeSelling() {
+    const { closeSellAction, vendas } = this.props;
+    const { cashBack, paymentValue, paymentType } = this.state;
 
-    if (discount < 0 || paymentValue === 0) {
+    if ((cashBack < 0 || paymentValue === 0) && paymentType === 0) {
       alert(
         'Esta venda está com valores incorretos. Favor corrigir para prosseguir'
       );
       return;
     }
 
-    this.setState({
+    const postObject = { ...vendas };
+    postObject.cashBack = this.state.cashBack;
+    postObject.payment =
+      this.state.paymentType === 0 ? this.state.paymentValue : vendas.amount;
+    postObject.paymentType = this.state.paymentType;
+
+    await this.setState({
       cod: '',
       description: '',
       quantity: 1,
       value: '0',
-      product: {}
+      product: {},
+      cashBack: 0,
+      paymentValue: 0
     });
-    closeSellAction();
+
+    closeSellAction(postObject);
   }
 
-  onChangePaymentValue = value => {
+  onChangePaymentValue = async value => {
     const { amount } = this.props.vendas;
-    this.setState({
+    await this.setState({
       ...this.state,
-      paymentValue: value,
-      discount: value - amount
+      paymentValue: parseFloat(value),
+      cashBack: parseFloat(value) - amount
     });
+  };
+
+  handleChange = ev => {
+    this.setState({ ...this.state, paymentType: ev.target.value });
   };
 
   render() {
@@ -148,7 +165,7 @@ class ItemDescription extends PureComponent {
       description,
       quantity,
       paymentValue,
-      discount,
+      cashBack,
       isLoading
     } = this.state;
     return isLoading ? (
@@ -199,6 +216,7 @@ class ItemDescription extends PureComponent {
             className={classNames(classes.textField, classes.dense)}
             margin="dense"
             variant="outlined"
+            disabled={true}
             value={description}
           />
         </Grid>
@@ -208,6 +226,7 @@ class ItemDescription extends PureComponent {
             id="outlined-dense"
             label="Valor"
             className={classNames(classes.textField, classes.dense)}
+            disabled={true}
             margin="dense"
             variant="outlined"
             value={value}
@@ -233,8 +252,40 @@ class ItemDescription extends PureComponent {
             className={classNames(classes.textField, classes.dense)}
             margin="dense"
             variant="outlined"
-            value={discount}
+            disabled={true}
+            value={cashBack}
           />
+        </Grid>
+
+        <Grid item xs={12}>
+          <FormControl
+            variant="outlined"
+            className={classNames(classes.textField, classes.dense)}
+            fullWidth
+          >
+            <InputLabel
+              ref={ref => {
+                this.InputLabelRef = ref;
+              }}
+              htmlFor="outlined-age-simple"
+            >
+              Metodo de Pagamento
+            </InputLabel>
+            <Select
+              value={this.state.paymentType}
+              onChange={this.handleChange}
+              input={
+                <OutlinedInput
+                  labelWidth={160}
+                  name="Metodo de Pagamento"
+                  id="outlined-age-simple"
+                />
+              }
+            >
+              <MenuItem value={0}>Dinheiro</MenuItem>
+              <MenuItem value={1}>Cartão</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
 
         <Grid item xs={12} className={classes.button}>

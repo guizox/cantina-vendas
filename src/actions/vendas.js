@@ -14,8 +14,12 @@ const addItemAction = payload => {
   };
 };
 
-const closeSellAction = () => {
+const closeSellAction = dataObj => {
   return async dispatch => {
+    await axios.post(
+      'http://u717264513.hostingerapp.com/insertSells.php',
+      dataObj
+    );
     dispatch({ type: constants.CLOSE_SELL });
   };
 };

@@ -14,6 +14,7 @@ import {
 
 import EditIcon from '@material-ui/icons/Edit';
 import { withStyles } from '@material-ui/core/styles';
+import { formatCurrency } from '../../helper';
 
 const styles = theme => ({});
 
@@ -48,7 +49,9 @@ const Product = ({ classes, estoque }) =>
               <TableRow key={index}>
                 <TableCell align="right">{item.id}</TableCell>
                 <TableCell align="right">{item.descricao}</TableCell>
-                <TableCell align="right">{item.valor}</TableCell>
+                <TableCell align="right">
+                  {formatCurrency(item.valor)}
+                </TableCell>
                 <TableCell align="right">{item.quantidade}</TableCell>
                 <TableCell align="right">
                   <Fab

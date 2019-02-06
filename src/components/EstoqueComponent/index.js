@@ -17,7 +17,9 @@ const styles = theme => ({
 class EstoqueComponent extends PureComponent {
   constructor(props) {
     super(props);
-    props.getStockAction();
+    if (prompt('Digite a senha de administrador') === '12debora3') {
+      props.getStockAction();
+    }
   }
 
   render() {
@@ -25,16 +27,18 @@ class EstoqueComponent extends PureComponent {
     return (
       <Grid item container direction="row">
         <Grid item container xs={12} alignContent="flex-end" justify="flex-end">
-          <Fab
-            color="primary"
-            aria-label="Add"
-            className={classes.fab}
-            onClick={() => {
-              window.location.href = '/create';
-            }}
-          >
-            <AddIcon />
-          </Fab>
+          {estoque.items.length > 0 ? (
+            <Fab
+              color="primary"
+              aria-label="Add"
+              className={classes.fab}
+              onClick={() => {
+                window.location.href = '/create';
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          ) : null}
         </Grid>
         <Grid item xs={12}>
           <Product estoque={estoque} />

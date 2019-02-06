@@ -25,12 +25,6 @@ class CreateItem extends PureComponent {
     this.setState({ ...this.state, [field]: value });
   };
 
-  formatCurrency = value =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-
   async onClickHandle() {
     const {
       insertItemAction,

@@ -7,6 +7,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import EstoqueComponent from './components/EstoqueComponent';
 import VendaComponent from './components/VendaComponent';
 import CreateItem from './components/CreateItem';
+import Report from './components/Report';
 
 class App extends Component {
   render() {
@@ -19,6 +20,7 @@ class App extends Component {
             <Route path="/estoque" component={EstoqueComponent} />
             <Route path="/create" component={CreateItem} />
             <Route path="/create/:id" component={CreateItem} />
+            <Route path="/relatório" component={Report} />
           </Switch>
         </BrowserRouter>
       </Provider>
