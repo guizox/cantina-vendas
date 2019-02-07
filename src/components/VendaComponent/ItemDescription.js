@@ -20,6 +20,7 @@ import {
 } from '../../actions/vendas';
 import { getStockAction } from '../../actions/estoque';
 import { bindActionCreators } from 'redux';
+import { formatCurrency } from '../../helper';
 
 const styles = theme => ({
   textField: {
@@ -229,7 +230,7 @@ class ItemDescription extends PureComponent {
             disabled={true}
             margin="dense"
             variant="outlined"
-            value={value}
+            value={formatCurrency(value)}
           />
         </Grid>
 
@@ -253,7 +254,7 @@ class ItemDescription extends PureComponent {
             margin="dense"
             variant="outlined"
             disabled={true}
-            value={cashBack}
+            value={formatCurrency(cashBack)}
           />
         </Grid>
 
