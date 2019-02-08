@@ -107,8 +107,10 @@ class ItemDescription extends PureComponent {
           description: '',
           value: '0',
           product: {},
-          cod: ''
+          cod: '',
+          quantity: '1'
         });
+        document.getElementById('codigo').focus();
       }
     } else if (ev.keyCode === 32) {
       this.closeSelling();
@@ -131,6 +133,7 @@ class ItemDescription extends PureComponent {
     postObject.payment =
       this.state.paymentType === 0 ? this.state.paymentValue : vendas.amount;
     postObject.paymentType = this.state.paymentType;
+    debugger;
 
     await this.setState({
       cod: '',
@@ -147,11 +150,19 @@ class ItemDescription extends PureComponent {
 
   onChangePaymentValue = async value => {
     const { amount } = this.props.vendas;
-    await this.setState({
-      ...this.state,
-      paymentValue: parseFloat(value),
-      cashBack: parseFloat(value) - amount
-    });
+    if (value > 0) {
+      await this.setState({
+        ...this.state,
+        paymentValue: parseFloat(value),
+        cashBack: parseFloat(value) - amount
+      });
+    } else {
+      await this.setState({
+        ...this.state,
+        paymentValue: 0,
+        cashBack: 0 - amount
+      });
+    }
   };
 
   handleChange = ev => {
@@ -190,7 +201,7 @@ class ItemDescription extends PureComponent {
       >
         <Grid item xs={12}>
           <TextField
-            id="outlined-dense"
+            id="codigo"
             label="Código"
             className={classNames(classes.textField, classes.dense)}
             margin="dense"
@@ -284,7 +295,8 @@ class ItemDescription extends PureComponent {
               }
             >
               <MenuItem value={0}>Dinheiro</MenuItem>
-              <MenuItem value={1}>Cartão</MenuItem>
+              <MenuItem value={1}>Cartão Débito</MenuItem>
+              <MenuItem value={2}>Cartão Crédito</MenuItem>
             </Select>
           </FormControl>
         </Grid>

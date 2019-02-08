@@ -16,4 +16,15 @@ const getVendasAction = dataObj => {
   };
 };
 
-export { getVendasAction };
+const requestItensPerSellAction = id => {
+  return async dispatch => {
+    dispatch({ type: constants.REQUEST_REPORT_INFOS });
+    const { data } = await axios.get(
+      `http://u717264513.hostingerapp.com/getSellById.php?id=${id}`
+    );
+
+    dispatch({ type: constants.FULL_FILL_SELL_DETAIL, payload: data });
+  };
+};
+
+export { getVendasAction, requestItensPerSellAction };

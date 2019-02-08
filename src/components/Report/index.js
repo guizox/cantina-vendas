@@ -18,13 +18,17 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  OutlinedInput
+  OutlinedInput,
+  Dialog
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 import DescriptionIcon from '@material-ui/icons/Description';
 
-import { getVendasAction } from '../../actions/relatorio';
+import {
+  getVendasAction,
+  requestItensPerSellAction
+} from '../../actions/relatorio';
 import { formatCurrency } from '../../helper';
 import classNames from 'classnames';
 
@@ -45,7 +49,9 @@ const styles = theme => ({
 class Report extends PureComponent {
   state = {
     paymentType: '',
-    date: ''
+    date: '',
+    open: false,
+    totalAmount: 0
   };
 
   componentWillMount() {
@@ -68,7 +74,7 @@ class Report extends PureComponent {
 
   render() {
     const {
-      relatorio: { isLoading, vendas },
+      relatorio: { isLoading, vendas, itens },
       classes
     } = this.props;
     return isLoading ? (
@@ -86,6 +92,47 @@ class Report extends PureComponent {
       </Grid>
     ) : (
       <Grid container direction="column">
+        <Dialog
+          open={this.state.open}
+          onClose={() => this.setState({ open: false, totalAmount: 0 })}
+        >
+          <Paper>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="right">Descrição</TableCell>
+                  <TableCell align="right">Quantidade</TableCell>
+                  <TableCell align="right">Valor</TableCell>
+                  <TableCell align="right">Total</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {itens.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell component="th" align="right">
+                      {item.descricao}
+                    </TableCell>
+                    <TableCell component="th" align="right">
+                      {item.itemQuantity}
+                    </TableCell>
+                    <TableCell component="th" align="right">
+                      {formatCurrency(item.valor)}
+                    </TableCell>
+                    <TableCell component="th" align="right">
+                      {formatCurrency(item.totalItemAmount)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow>
+                  <TableCell colSpan={3}>Valor da Venda</TableCell>
+                  <TableCell align="right">
+                    {formatCurrency(this.state.totalAmount)}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </Paper>
+        </Dialog>
         <Grid item xs={12} className={classes.spacing}>
           <Grid
             container
@@ -131,7 +178,8 @@ class Report extends PureComponent {
                 >
                   <MenuItem value={''} />
                   <MenuItem value={'0'}>Dinheiro</MenuItem>
-                  <MenuItem value={'1'}>Cartão</MenuItem>
+                  <MenuItem value={'1'}>Cartão Débito</MenuItem>
+                  <MenuItem value={'2'}>Cartão Crédito</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -172,7 +220,11 @@ class Report extends PureComponent {
                           this.onChange('paymentType', item.paymentType)
                         }
                       >
-                        {item.paymentType === '0' ? 'Dinheiro' : 'Cartão'}
+                        {item.paymentType === '0'
+                          ? 'Dinheiro'
+                          : item.paymentType === '1'
+                          ? 'Cartão Debito'
+                          : 'Cartão de Crédito'}
                       </TableCell>
                       <TableCell align="right">
                         {formatCurrency(item.totalAmount)}
@@ -193,7 +245,14 @@ class Report extends PureComponent {
                         <Fab
                           color="secondary"
                           aria-label="Edit"
-                          onClick={() => {}}
+                          onClick={async () => {
+                            const { requestItensPerSellAction } = this.props;
+                            await requestItensPerSellAction(item.id);
+                            this.setState({
+                              open: true,
+                              totalAmount: item.totalAmount
+                            });
+                          }}
                         >
                           <DescriptionIcon />
                         </Fab>
@@ -213,7 +272,7 @@ class Report extends PureComponent {
 const mapStateToProps = ({ relatorio }) => ({ relatorio });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ getVendasAction }, dispatch);
+  bindActionCreators({ getVendasAction, requestItensPerSellAction }, dispatch);
 
 export default withStyles(styles)(
   connect(

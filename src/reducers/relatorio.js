@@ -3,7 +3,8 @@ import { cloneDeep } from 'lodash';
 
 const defaultState = {
   vendas: [],
-  isLoading: false
+  isLoading: false,
+  itens: []
 };
 
 export default (state = cloneDeep(defaultState), action) => {
@@ -23,6 +24,12 @@ export default (state = cloneDeep(defaultState), action) => {
       return {
         ...state,
         vendas: payload
+      };
+    case constants.FULL_FILL_SELL_DETAIL:
+      return {
+        ...state,
+        itens: payload,
+        isLoading: false
       };
     default:
       return state;
